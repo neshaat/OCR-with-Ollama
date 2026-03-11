@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt OCR</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Receipt OCR and Accuracy Check</h1>
+        <form id="upload-form" enctype="multipart/form-data">
+            <input type="file" id="receipt-image" accept="image/*">
+            <button type="submit">Upload and Process</button>
+        </form>
+        <div class="results">
+            <h2>Results:</h2>
+            <div id="extracted-text-section">
+                <h3>Extracted Text:</h3>
+                <p id="extracted-text"></p>
+            </div>
+            <div id="accuracy-check-section">
+                <h3>Accuracy Check:</h3>
+                <p id="accuracy-check"></p>
+            </div>
+            <div id="error-message" class="error"></div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const fileInput = document.getElementById('receipt-image');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                document.getElementById('error-message').innerText = 'Please select an image file.';
+                return;
+            }
+
+            document.getElementById('error-message').innerText = '';
+            document.getElementById('extracted-text').innerText = 'Processing...';
+            document.getElementById('accuracy-check').innerText = 'Processing...';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/uploadfile/', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                document.getElementById('extracted-text').innerText = data.extracted_text;
+                document.getElementById('accuracy-check').innerText = data.accuracy_check;
+            } catch (error) {
+                document.getElementById('error-message').innerText = `Error: ${error.message}`;
+                document.getElementById('extracted-text').innerText = '';
+                document.getElementById('accuracy-check').innerText = '';
+            }
+        });
+    </script>
+</body>
+</html>

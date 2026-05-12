@@ -1,4 +1,9 @@
 <img width="440" height="745" alt="Screenshot" src="https://github.com/user-attachments/assets/22129df5-c2b9-49f6-ab83-7881b9cbc724" />
+
+
+
+
+
 # Receipt OCR with Ollama + Gemma3:4B
 
 This project demonstrates a lightweight **LLM-based OCR system** that extracts text from receipt images using **Gemma3:4B running on Ollama**.
